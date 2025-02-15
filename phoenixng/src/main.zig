@@ -3,51 +3,21 @@ const std = @import("std");
 const sprites = @import("sprites.zig");
 const Vec2 = @import("vec2.zig").Vec2;
 const random = @import("random.zig");
+const starfield = @import("starfield.zig");
 
 const screenSize = 160;
-
-const Star = struct {
-    pos: Vec2,
-    velocity: Vec2,
-
-    pub fn update(self: *Star, speed: f32) void {
-        self.pos.add(self.velocity);
-        var s = Vec2{ .x = 0, .y = 1 };
-        s.multiply(speed);
-        self.pos.add(s);
-        if (self.pos.y > screenSize) {
-            self.restart();
-        }
-    }
-
-    pub fn init(self: *Star) void {
-        self.pos = .{ .x = random.getRandomPos(), .y = random.getRandomPos() };
-        self.velocity = .{ .x = 0, .y = random.getRandomVelocity() };
-    }
-
-    pub fn restart(self: *Star) void {
-        self.pos = .{ .x = random.getRandomPos(), .y = 0 };
-    }
-};
 
 const Missile = struct {};
 
 var frameCount: u32 = 0;
 
-var stars: [80]Star = undefined;
 var global_velocity: f32 = 0;
 
 var missiles: [10]Missile = undefined;
 
-fn init_stars() void {
-    for (&stars) |*star| {
-        star.init();
-    }
-}
-
 export fn start() void {
     random.initRandom();
-    init_stars();
+    starfield.init();
 }
 
 const bgcolor = 3;
@@ -60,7 +30,7 @@ export fn update() void {
     }
 
     w4.DRAW_COLORS.* = 0x30;
-    for (&stars) |*star| {
+    for (&starfield.stars) |*star| {
         w4.rect(@intFromFloat(star.pos.x), @intFromFloat(star.pos.y), 1, 1);
         star.update(global_velocity);
     }
