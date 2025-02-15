@@ -7,21 +7,19 @@ const screenSize = 160;
 var prng: std.rand.DefaultPrng = undefined;
 var random: std.rand.Random = undefined;
 
-fn Vec2(comptime T: type) type {
-    return struct {
-        x: T,
-        y: T,
-        pub fn add(self: *@This(), other: @This()) void {
-            self.x += other.x;
-            self.y += other.y;
-        }
+const Vec2 = struct {
+    x: f32,
+    y: f32,
+    pub fn add(self: *@This(), other: @This()) void {
+        self.x += other.x;
+        self.y += other.y;
+    }
 
-        pub fn multiply(self: *@This(), scalar: T) void {
-            self.x *= scalar;
-            self.y *= scalar;
-        }
-    };
-}
+    pub fn multiply(self: *@This(), scalar: f32) void {
+        self.x *= scalar;
+        self.y *= scalar;
+    }
+};
 
 fn getRandomPos() f32 {
     return random.float(f32) * screenSize;
@@ -32,12 +30,12 @@ fn getRandomVelocity() f32 {
 }
 
 const Star = struct {
-    pos: Vec2(f32),
-    velocity: Vec2(f32),
+    pos: Vec2,
+    velocity: Vec2,
 
     pub fn update(self: *Star, speed: f32) void {
         self.pos.add(self.velocity);
-        var s = Vec2(f32){ .x = 0, .y = 1 };
+        var s = Vec2{ .x = 0, .y = 1 };
         s.multiply(speed);
         self.pos.add(s);
         if (self.pos.y > screenSize) {
@@ -55,14 +53,16 @@ const Star = struct {
     }
 };
 
+const Missile = struct {};
+
 var frameCount: u32 = 0;
 
-// var stars: [50]Star =[_]Star{Star{ .pos = .{}, .acceleration = .{}, .velocity = .{} }} ** 50;
 var stars: [80]Star = undefined;
 var global_velocity: f32 = 0;
 
+var missiles: [10]Missile = undefined;
+
 fn init_stars() void {
-    // *star is used to pass it as *Star
     for (&stars) |*star| {
         star.init();
     }
@@ -77,7 +77,7 @@ export fn start() void {
 
 const bgcolor = 3;
 
-var player_pos = Vec2(f32){ .x = screenSize / 2, .y = screenSize - sprites.player_height };
+var player_pos = Vec2{ .x = screenSize / 2 - sprites.player_width / 2, .y = screenSize - sprites.player_height };
 
 export fn update() void {
     for (w4.FRAMEBUFFER) |*x| {
@@ -94,8 +94,4 @@ export fn update() void {
 
     w4.DRAW_COLORS.* = 0x42;
     w4.blit(&sprites.player, @intFromFloat(player_pos.x), @intFromFloat(player_pos.y), sprites.player_width, sprites.player_height, sprites.player_flags);
-
-    // if (frameCount % 10 == 0) {
-    //     global_velocity += 0.11;
-    // }
 }
