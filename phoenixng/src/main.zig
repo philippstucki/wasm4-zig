@@ -7,13 +7,9 @@ const starfield = @import("starfield.zig");
 
 const screenSize = 160;
 
-const Missile = struct {};
-
 var frameCount: u32 = 0;
 
-var global_velocity: f32 = 0;
-
-var missiles: [10]Missile = undefined;
+var global_velocity: f32 = 0.2;
 
 export fn start() void {
     random.initRandom();
