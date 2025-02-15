@@ -1,33 +1,10 @@
 const w4 = @import("wasm4.zig");
 const std = @import("std");
 const sprites = @import("sprites.zig");
+const Vec2 = @import("vec2.zig").Vec2;
+const random = @import("random.zig");
 
 const screenSize = 160;
-
-var prng: std.rand.DefaultPrng = undefined;
-var random: std.rand.Random = undefined;
-
-const Vec2 = struct {
-    x: f32,
-    y: f32,
-    pub fn add(self: *@This(), other: @This()) void {
-        self.x += other.x;
-        self.y += other.y;
-    }
-
-    pub fn multiply(self: *@This(), scalar: f32) void {
-        self.x *= scalar;
-        self.y *= scalar;
-    }
-};
-
-fn getRandomPos() f32 {
-    return random.float(f32) * screenSize;
-}
-
-fn getRandomVelocity() f32 {
-    return if (random.float(f32) > 0.5) 0.4 else 0.2;
-}
 
 const Star = struct {
     pos: Vec2,
@@ -44,12 +21,12 @@ const Star = struct {
     }
 
     pub fn init(self: *Star) void {
-        self.pos = .{ .x = getRandomPos(), .y = getRandomPos() };
-        self.velocity = .{ .x = 0, .y = getRandomVelocity() };
+        self.pos = .{ .x = random.getRandomPos(), .y = random.getRandomPos() };
+        self.velocity = .{ .x = 0, .y = random.getRandomVelocity() };
     }
 
     pub fn restart(self: *Star) void {
-        self.pos = .{ .x = getRandomPos(), .y = 0 };
+        self.pos = .{ .x = random.getRandomPos(), .y = 0 };
     }
 };
 
@@ -69,9 +46,7 @@ fn init_stars() void {
 }
 
 export fn start() void {
-    prng = std.rand.DefaultPrng.init(0);
-    random = prng.random();
-
+    random.initRandom();
     init_stars();
 }
 
