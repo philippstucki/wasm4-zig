@@ -31,8 +31,8 @@ export fn update() void {
         star.update(global_velocity);
     }
 
-    frameCount += 1;
+    player.update();
+    player.draw();
 
-    w4.DRAW_COLORS.* = 0x42;
-    w4.blit(&sprites.player, @intFromFloat(player.pos.x), @intFromFloat(player.pos.y), sprites.player_width, sprites.player_height, sprites.player_flags);
+    frameCount += 1;
 }
