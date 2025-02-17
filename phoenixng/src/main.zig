@@ -4,11 +4,11 @@ const sprites = @import("sprites.zig");
 const Vec2 = @import("vec2.zig").Vec2;
 const random = @import("random.zig");
 const starfield = @import("starfield.zig");
+const Player = @import("player.zig").Player;
 
 const screenSize = 160;
 
 var frameCount: u32 = 0;
-
 var global_velocity: f32 = 0.2;
 
 export fn start() void {
@@ -18,7 +18,7 @@ export fn start() void {
 
 const bgcolor = 3;
 
-var player_pos = Vec2{ .x = screenSize / 2 - sprites.player_width / 2, .y = screenSize - sprites.player_height };
+var player = Player.create();
 
 export fn update() void {
     for (w4.FRAMEBUFFER) |*x| {
@@ -34,5 +34,5 @@ export fn update() void {
     frameCount += 1;
 
     w4.DRAW_COLORS.* = 0x42;
-    w4.blit(&sprites.player, @intFromFloat(player_pos.x), @intFromFloat(player_pos.y), sprites.player_width, sprites.player_height, sprites.player_flags);
+    w4.blit(&sprites.player, @intFromFloat(player.pos.x), @intFromFloat(player.pos.y), sprites.player_width, sprites.player_height, sprites.player_flags);
 }
