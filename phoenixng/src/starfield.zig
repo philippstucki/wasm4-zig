@@ -32,4 +32,9 @@ pub const Star = struct {
     pub fn restart(self: *Star) void {
         self.pos = .{ .x = random.getRandomPos(), .y = 0 };
     }
+
+    pub fn draw(self: *Star) void {
+        w4.DRAW_COLORS.* = 0x30;
+        w4.rect(@intFromFloat(self.pos.x), @intFromFloat(self.pos.y), 1, 1);
+    }
 };
